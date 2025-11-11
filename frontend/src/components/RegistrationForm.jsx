@@ -1,8 +1,20 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useContext } from "react";
+import { UserContext } from "../userContext";
+
+
+
 
 export const RegistrationForm = () => {
+    const { setUser } = useContext(UserContext);
+const [modal, setModal] = useState({ show: false, type: "success", message: "" });
+  
+
+
+
+
   const [values, setValues] = useState({
     name: "",
     email: "",
@@ -31,22 +43,24 @@ export const RegistrationForm = () => {
 
       const res = await axios.post(endpoint, values);
       console.log("✅ Server response:", res.data);
+ if (res.status === 200 || res.status === 201) {
+        setUser(res.data.user);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
 
-      if (res.status === 200 || res.status === 201) {
-        alert(res.data.message || "Success!");
-        navigate("/ok");
+        setModal({ show: true, type: "success", message: res.data.message || "Success!" });
+        setTimeout(() => {
+          setModal({ ...modal, show: false });
+          navigate("/");
+        }, 1500);
       } else {
-        alert(res.data.error || "Something went wrong!");
+        setModal({ show: true, type: "error", message: res.data.error || "Something went wrong!" });
       }
     } catch (err) {
-      console.error("❌ Request error:", err);
-      if (err.response) {
-        alert(err.response.data.error || "Server responded with an error.");
-      } else if (err.request) {
-        alert("No response from server. Check backend connection.");
-      } else {
-        alert("Request error. Check console for details.");
-      }
+      let errorMsg = "Request error";
+      if (err.response) errorMsg = err.response.data.error || errorMsg;
+      else if (err.request) errorMsg = "No response from server";
+
+      setModal({ show: true, type: "error", message: errorMsg });
     }
   };
 
@@ -153,6 +167,7 @@ export const RegistrationForm = () => {
           </form>
         </div>
       </div>
+      
     </div>
   );
 };

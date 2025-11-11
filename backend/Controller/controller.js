@@ -110,3 +110,66 @@ export const getHotelsByCity = (req, res) => {
   });
 };
 
+
+
+
+export const createBooking = async (req, res) => {
+  try {
+    const { userId, hotelId, city, days, totalPrice } = req.body;
+
+    if (!userId || !hotelId || !city || !days || !totalPrice) {
+      return res.status(400).json({ message: "All fields are required" });
+    }
+
+    // First, decrease available_rooms
+    const updateQuery = `
+      UPDATE hotels
+      SET available_rooms = available_rooms - 1
+      WHERE id = ? AND available_rooms > 0
+    `;
+    const [updateResult] = await db.promise().query(updateQuery, [hotelId]);
+
+    if (updateResult.affectedRows === 0) {
+      return res.status(400).json({ message: "No available rooms left for this hotel" });
+    }
+
+    // Then, insert the booking
+    const insertQuery = `
+      INSERT INTO bookings (user_id, hotel_id, city, days, total_price)
+      VALUES (?, ?, ?, ?, ?)
+    `;
+    await db.promise().query(insertQuery, [userId, hotelId, city, days, totalPrice]);
+
+    res.status(201).json({ message: "Booking created successfully" });
+  } catch (error) {
+    console.error("Error creating booking:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
+
+
+
+
+
+
+export const getUserBookings = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const query = `
+      SELECT b.id, b.city, b.days, b.total_price,
+             h.name AS hotel_name, h.image_url AS hotel_image
+      FROM bookings b
+      JOIN hotels h ON b.hotel_id = h.id
+      WHERE b.user_id = ?
+      ORDER BY b.created_at DESC
+    `;
+
+    const [results] = await db.promise().query(query, [userId]);
+
+    res.json({ bookings: results });
+  } catch (err) {
+    console.error("Error fetching bookings:", err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+};
