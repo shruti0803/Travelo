@@ -1,24 +1,43 @@
 import express from "express";
 import mysql from "mysql2";
 import cors from "cors";
-import routes from "./Routes/routes.js"
-// --- CONFIG ---
+import routes from "./Routes/routes.js";
+
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = 8080;
 
-// --- MIDDLEWARE ---
-app.use(cors());
-app.use(express.json()); // parse JSON body
+// ✅ Allow preflight (OPTIONS) requests
+//app.options("*", cors());
 
-// --- MYSQL CONNECTION ---
-export const db = mysql.createConnection({
-  host: "localhost",       // your DB host
-  user: "root",            // your MySQL username
-   password: "Rudrach@",
-  database: "travel",
-});
+// ✅ Use CORS middleware before routes
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true,
+  })
+);
+
+// ✅ Parse JSON body
+app.use(express.json());
+
+// ✅ Mount routes
 app.use("/user", routes);
-// --- CONNECT TO DATABASE ---
+
+// ✅ Test root
+app.get("/", (req, res) => {
+  res.send("Backend working!");
+});
+
+// ✅ MySQL connection
+export const db = mysql.createConnection({
+  host: "localhost",
+  user: "root",
+  password: "IshaSql@562",
+  database: "Travel",
+});
+
 db.connect((err) => {
   if (err) {
     console.error("❌ MySQL connection failed:", err.message);
@@ -28,17 +47,11 @@ db.connect((err) => {
   }
 });
 
-
-
-
-
-
-
-// --- GLOBAL ERROR HANDLER ---
+// ✅ Global error handler
 app.use((err, req, res, next) => {
   console.error("🔥 Server Error:", err);
   res.status(500).json({ error: "Internal Server Error" });
 });
 
-// --- START SERVER ---
+// ✅ Start server
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
