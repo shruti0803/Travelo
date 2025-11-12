@@ -9,6 +9,7 @@ import { Package } from './components/Package'
 import Navbar from './components/Navbar'
 import TravelBot from './components/TravelBot'
 import HotelsPage from './components/HotelPage'
+import { MyBookings } from './components/MyBookings'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -23,6 +24,7 @@ function App() {
             <Route path="/travelbot/:city" element={<TravelBot/>} />
           <Route path="/register" element={<RegistrationForm/>}/>
            <Route path="/hotels/:city" element={<HotelsPage/>} />
+            <Route path="/mybookings" element={<MyBookings/>} /> {/* add route */}
           {/* <Route path="/ok" element={<Ok/>}/>  */}
         </Routes>
         

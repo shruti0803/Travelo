@@ -6,10 +6,10 @@ export const Hero = () => {
   const [search, setSearch] = useState('');
   const [suggestions, setSuggestions] = useState([]);
 
-  // Example list of cities
+
   const cities = ['Varanasi', 'Jaipur','Jodhpur', 'Srinagar', 'Delhi', 'Mumbai', 'Goa', 'Agra'];
 
-  // Filter suggestions as user types
+ 
   const handleChange = (e) => {
     const value = e.target.value;
     setSearch(value);
@@ -24,11 +24,11 @@ export const Hero = () => {
     }
   };
 
-  // Handle suggestion click
+  
   const handleSelect = (city) => {
     setSearch(city);
     setSuggestions([]);
-    navigate(`/hotels/${city}`); // Navigate to the hotels page for that city
+    navigate(`/hotels/${city}`); 
   };
 
   const handleExploreClick = () => {
@@ -76,7 +76,7 @@ export const Hero = () => {
             placeholder="Enter your city here"
           />
 
-          {/* Suggestions dropdown */}
+        
           {suggestions.length > 0 && (
             <ul className="absolute bg-white border border-gray-300 w-[200px] max-h-48 overflow-auto left-1/2 transform -translate-x-1/2 rounded-md shadow-lg z-50">
               {suggestions.map((city, index) => (

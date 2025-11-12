@@ -2,7 +2,7 @@ import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { UserContext } from '../userContext';
 import { FaUserCircle } from 'react-icons/fa';
-
+import { MyBookings } from './MyBookings.jsx';
 const Navbar = () => {
   const navigate = useNavigate();
   const { user, setUser } = useContext(UserContext);
@@ -36,24 +36,34 @@ const Navbar = () => {
           <Link to="/package" className="text-white">Explore</Link>
           <Link to="/contact" className="text-white">Contact Us</Link>
 
-          {user && (
-            <div className="relative ml-4">
-              <FaUserCircle
-                className="text-white w-8 h-8 rounded-full cursor-pointer"
-                onClick={() => setShowLogout(!showLogout)}
-              />
-              {showLogout && (
-                <div className="absolute right-0 mt-2 w-32 bg-white rounded-lg shadow-lg text-center z-50">
-                  <button
-                    onClick={handleLogout}
-                    className="w-full py-2 px-4 text-red-600 hover:bg-gray-100 rounded-lg"
-                  >
-                    Logout
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
+         {user && (
+  <div className="relative ml-4">
+    <FaUserCircle
+      className="text-white w-8 h-8 rounded-full cursor-pointer"
+      onClick={() => setShowLogout(!showLogout)}
+    />
+    {showLogout && (
+      <div className="absolute right-0 mt-2 w-40 bg-white rounded-lg shadow-lg text-center z-50">
+        <button
+          onClick={() => {
+            navigate('/mybookings');
+            setShowLogout(false);
+          }}
+          className="w-full py-2 px-4 text-gray-800 hover:bg-gray-100 rounded-lg"
+        >
+          My Bookings
+        </button>
+        <button
+          onClick={handleLogout}
+          className="w-full py-2 px-4 text-red-600 hover:bg-gray-100 rounded-lg"
+        >
+          Logout
+        </button>
+      </div>
+    )}
+  </div>
+)}
+
         </div>
 
         {/* Mobile Menu Button */}
